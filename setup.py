@@ -6,6 +6,8 @@ setup(
         "glide_text2im",
         "glide_text2im.clip",
         "glide_text2im.tokenizer",
+        "Benchmarking",
+        "Benchmarking.utils",
     ],
     package_data={
         "glide_text2im.tokenizer": [
@@ -25,6 +27,7 @@ setup(
         "ftfy",
         "regex",
         "numpy",
+        "wandb",
     ],
     author="OpenAI",
 )
