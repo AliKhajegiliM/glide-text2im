@@ -65,6 +65,29 @@ class Data_Loader(Dataset):
         return feat, hist, coord, target, slide_name
 
 
+class Glide_DataLoader(Data_Loader):
+    """Dataset that reshapes patch features into pseudo-images for GLIDE."""
+
+    def __getitem__(self, idx):
+        feat, hist, coord, target, slide_name = super().__getitem__(idx)
+        # reshape patch features (N, F) -> (F, 1, N)
+        feat_img = feat.transpose(0, 1).unsqueeze(1)
+        return feat_img, target, slide_name
+
+
+def glide_collate_fn(batch):
+    feats, targets, slide_names = zip(*batch)
+
+    max_w = max(f.shape[-1] for f in feats)
+    padded = []
+    for f in feats:
+        pad = (0, max_w - f.shape[-1], 0, 0)
+        padded.append(torch.nn.functional.pad(f, pad))
+    feats = torch.stack(padded)
+    targets = torch.stack(targets)
+    return feats, targets, list(slide_names)
+
+
 def collate_fn(batch):
     feats, hists, coords, targets, slide_names = zip(*batch)
 
